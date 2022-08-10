@@ -1,5 +1,3 @@
-use std::{cell::RefCell, rc::Rc};
-
 use yew::prelude::*;
 
 mod dom_utils;
@@ -11,19 +9,12 @@ use game::*;
 fn App() -> Html {
   let main_canvas_node = use_node_ref();
   let buffer_canvas_node = use_node_ref();
+  let game = use_mut_ref(|| Game::new(&buffer_canvas_node.clone(), &main_canvas_node.clone()));
 
-  {
-    let main_canvas_node = main_canvas_node.clone();
-    let buffer_canvas_node = buffer_canvas_node.clone();
-    use_effect(move || {
-      let game = Rc::new(RefCell::new(Game::new(
-        &buffer_canvas_node.clone(),
-        &main_canvas_node.clone(),
-      )));
-      Game::start(game);
-      || {}
-    });
-  }
+  use_effect(move || {
+    Game::start(game);
+    || {}
+  });
 
   html! {
     <>
